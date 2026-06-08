@@ -36,12 +36,12 @@ jobs:
       env:
         SKIP_JDK_VERSION_CHECK: true
       with:
-        packages: |
-          build-tools;33.0.1
-          platforms;android-33
-          platform-tools
-          ndk;25.1.8937393
-          cmdline-tools
+        packages:
+          - build-tools;33.0.1
+          - platforms;android-33
+          - platform-tools
+          - ndk;25.1.8937393
+          - cmdline-tools;latest
         accept-android-sdk-licenses: true
         
     - name: Build APK
