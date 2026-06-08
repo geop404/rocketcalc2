@@ -3,26 +3,38 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
-    
+
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git build-essential libssl-dev libffi-dev python3-dev
+        pip install --upgrade pip setuptools
+        pip install cython buildozer kivy
+
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+      env:
+        SKIP_JDK_VERSION_CHECK: true
       with:
         packages: |
           build-tools;33.0.1
@@ -31,21 +43,17 @@ jobs:
           ndk;25.1.8937393
           cmdline-tools
         accept-android-sdk-licenses: true
-    
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git openjdk-11-jdk-headless build-essential libssl-dev libffi-dev python3-dev
-        pip install --upgrade pip setuptools
-        pip install cython buildozer kivy
-    
+        
     - name: Build APK
-      run: buildozer android release
-    
+      run: |
+        buildozer android release
+
     - name: Upload APK
       uses: actions/upload-artifact@v4
       if: success()
       with:
         name: apk-release
-        path: bin/*.apk
+        path: |
+          bin/*.apk
+          bin/*.aab
         retention-days: 30
