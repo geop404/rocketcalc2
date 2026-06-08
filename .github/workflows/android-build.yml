@@ -24,9 +24,9 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y python3-pip cython git openjdk-11-jdk-headless build-essential
-        pip install --upgrade pip
-        pip install buildozer kivy
+        sudo apt-get install -y git openjdk-11-jdk-headless build-essential libssl-dev libffi-dev python3-dev
+        pip install --upgrade pip setuptools
+        pip install cython buildozer kivy
     
     - name: Build APK
       run: buildozer android release
