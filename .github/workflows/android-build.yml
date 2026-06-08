@@ -54,15 +54,15 @@ jobs:
         "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses || true
         "$SDKMANAGER" --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.1" "ndk;25.1.8937393" "cmdline-tools;latest"
     - name: Build APK
+      env:
+        ANDROID_HOME: $HOME/android-sdk
+        ANDROID_SDK_ROOT: $HOME/android-sdk
+        ANDROIDSDK: $HOME/android-sdk
+        ANDROIDNDK: $HOME/android-sdk/ndk/25.1.8937393
+        ANDROID_NDK_HOME: $HOME/android-sdk/ndk/25.1.8937393
+        ANDROID_NDK_ROOT: $HOME/android-sdk/ndk/25.1.8937393
       run: |
         buildozer android release
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: apk-release
-        path: |
-          bin/*.apk
-          bin/*.aab
-        retention-days: 30
