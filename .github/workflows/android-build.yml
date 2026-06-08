@@ -21,6 +21,13 @@ jobs:
       with:
         python-version: '3.11'
     
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 33
+        build-tools-version: 33.0.1
+        ndk-version: 25.1.8937393
+    
     - name: Install Dependencies
       run: |
         sudo apt-get update
