@@ -31,18 +31,21 @@ jobs:
         pip install --upgrade pip setuptools
         pip install cython buildozer kivy
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+    - name: Install Android SDK cmdline tools and packages
       env:
-        SKIP_JDK_VERSION_CHECK: true
-      with:
-        packages: |
-          build-tools;33.0.1
-          platforms;android-33
-          platform-tools
-          ndk;25.1.8937393
-          cmdline-tools
-        accept-android-sdk-licenses: true
+        ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
+      run: |
+        set -e
+        SDK_ROOT="$HOME/android-sdk"
+        mkdir -p "$SDK_ROOT/cmdline-tools"
+        cd $RUNNER_TEMP
+        curl -sSLo commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip -q commandlinetools.zip
+        mv cmdline-tools "$SDK_ROOT/cmdline-tools/latest"
+        export ANDROID_SDK_ROOT="$SDK_ROOT"
+        export PATH="$SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+        yes | sdkmanager --sdk_root="$SDK_ROOT" --licenses || true
+        sdkmanager --sdk_root="$SDK_ROOT" "platform-tools" "platforms;android-33" "build-tools;33.0.1" "ndk;25.1.8937393" "cmdline-tools;latest"
         
     - name: Build APK
       run: |
